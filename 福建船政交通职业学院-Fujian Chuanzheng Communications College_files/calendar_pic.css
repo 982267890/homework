@@ -1,0 +1,204 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+ul, li {
+	list-style: none;
+}
+.clearfix:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+.clearfix {
+	display: block;
+*zoom:1;
+}
+.sudyCalendar {
+	margin: 0 auto;
+}
+.sudyCalendar .thuimg .thuimga {
+	position: relative;
+	display: block;
+	width: 1000px;
+	margin: auto;
+	height: 400px;
+	z-index: 0;
+}
+.sudyCalendar .thuimg .thuimga #swfid {
+	margin: 0;
+	padding: 0;
+}
+.sudyCalendar .thuimg .thuimga .mainImg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: none;
+	width: 100%;
+	height: 100%;
+}
+.sudyCalendar .thuimg .imgTitle {
+	position: absolute;
+	top: -90px;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	width: auto;
+	text-align: right;/* overflow:hidden; */
+}
+.sudyCalendar .thuimg .imgTitle .bg {
+	position: absolute;
+	z-index: -1;
+	height: 52px;
+	background: #252525;
+	filter: alpha(opacity=50);
+	opacity: .5;
+	width: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+.sudyCalendar .thuimg .imgTitle .txt {
+	color: #fff;
+	font-size: 18px;
+	line-height: 52px;
+	padding-right: 15px;
+	white-space: nowrap;
+}
+.sudyCalendar .thuimg .imgTitle .day {
+	position: absolute;
+	left: 0;
+	padding: 10px 0px 10px;
+	width: 96px;
+	height: 60px;
+	background: #11b0eb;
+	top: 10px;
+	text-align: center;
+	line-height: 30px;
+	font-size: 18px;
+	color: #fff;
+}
+.sudyCalendar .thuimg .imgTitle .day.today {
+	font-size: 24px;
+}
+.sudyCalendar .thuimg .imgTitle .day .time-year {
+	display: block;
+	font-size: 24px;
+}
+.sudyCalendar .thuimg .imgTitle .day .time-days {
+	display: block;
+}
+.sudyCalendar .thuimg .month {
+	background: url(../images/datebg.png) repeat;
+	position: absolute;
+	padding-left: 114px;
+	top: -38px;
+	left: 0;
+	right: 0;
+}
+.sudyCalendar .thuimg .month .arrow {
+	position: absolute;
+	color: #fff;
+	font-size: 20px;
+	line-height: 38px;
+	padding: 0 3px;
+*width:28px;
+	cursor: pointer;
+}
+.sudyCalendar .thuimg .month .arrowleft {
+	left: 96px;
+}
+.sudyCalendar .thuimg .month .arrowright {
+	right: 0;
+}
+.sudyCalendar .thuimg .month .arrowright:hover, .thuimg .month .arrowleft:hover {/* background:#703d97; */
+	color: #ccc;
+}
+.sudyCalendar .thuimg .month .monthTxt {
+	position: absolute;
+	right: 10px;
+	margin: 0 15px 0 20px;
+	color: #fff;
+}
+.sudyCalendar .thuimg .month .monthTxt span {
+	font-size: 20px;
+	line-height: 38px;
+	padding-right: 3px;
+	color: #fff;
+}
+.sudyCalendar .thuimg .month .day {
+	float: left;
+	_display: inline;
+}
+.sudyCalendar .thuimg .month .day li {
+	float: left;
+	_display: inline;
+	font-size: 12px;
+	padding: 4px 1px;
+}
+.sudyCalendar .thuimg .month .day a {
+	color: #ffc600;
+	display: block;
+	line-height: 30px;
+	text-align: center;
+	width: 24px;
+	cursor: pointer;
+	zoom: 1;
+}
+.sudyCalendar .thuimg .month .day a:hover {
+	background: #168ed2;
+}
+.sudyCalendar .thuimg .month .day a.none {
+	color: #fff;
+}
+.sudyCalendar .thuimg .month .day a.none:hover {
+	background: none;
+	cursor: text;
+}
+.sudyCalendar .thuimg .month .day a.current {
+	color: #ffc600;
+}
+.sudyCalendar .thuimg .imgarrow {
+	width: 42px;
+	height: 52px;
+	line-height: 52px;
+	position: absolute;
+	color: #fff;
+	font-family: "Simsun";
+	font-size: 38px;
+	top: -260px;
+	cursor: pointer;
+	opacity: .8;
+	filter: alpha(opacity=80);
+	overflow: hidden;
+	border: 1px solid #fff;
+	background: #77b7db;
+}
+.sudyCalendar .thuimg .imgarrow:before {
+	margin: 0;
+}
+.sudyCalendar .thuimg .imgarrow.imgarrowleft {
+	left: -60px;
+}
+.sudyCalendar .thuimg .imgarrow.imgarrowright {
+	right: -60px;
+}
+.sudyCalendar .thuimg .imgarrow.imgarrowleft:hover, .thuimg .imgarrow.imgarrowright:hover {
+}
+.sudyCalendar .thuimg {
+	text-align: center;
+}
+.sudyCalendar .thuimg .thuimgWrap {
+	min-width: 1000px;
+	overflow: hidden;
+	background: url(loading.gif) no-repeat center center;
+*height:400px;
+}
+.sudyCalendar .mainWrap {
+	width: 1000px;
+	margin: auto;
+	min-width: 320px;
+	position: relative;
+}

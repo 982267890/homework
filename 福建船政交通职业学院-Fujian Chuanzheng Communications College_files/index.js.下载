@@ -1,0 +1,345 @@
+;(function($){
+    $.fn.sudyclndr = function(o){
+		var opt = {
+			newTody:true,    					/*显示当前日期*/
+            newTime: "2015-12-01",				/*自定义最新日期 在 newTody为false下生效*/
+            limittime: "2015-08-01",			/*遍历最早日期*/
+            preloadingnum: 5,					/*预加载数目*/
+			imgUrl:true						    /*是否加载图片链接 默认显示*/
+        },
+		o = $.extend(opt, o);
+		return this.each(function() {
+			var el = $(this),cal;
+			el.append("<div class='thuimg'><div class='thuimgWrap'></div><div class='mainWrap '></div></div>");
+			var s = el.find(".thuimgWrap"),u = el.find(".mainWrap");
+			s.append("<a class='thuimga thua'><img class='mainImg'></a>");
+			u.append("<a class='imgarrow imgarrowleft' id='thuimgPre'>&lt;</a><a class='imgarrow imgarrowright' id='thuimgNext'>&gt;</a>")
+			.append("<div class='imgTitle'></div>")
+			.append("<div class='month clearfix'></div>");
+			var sudytitle = u.find(".imgTitle"),sudydate = u.find(".month");
+			sudytitle.append("<span class='bg'></span>")
+			.append("<a class='txt yahei thua' id='thuImgTitle'></a>")
+			.append("<span class='day today' id='calendarToday'>Today</span>");
+			
+			sudydate.append("<a class='arrowleft arrow' id='calendarMonthpre'>&lt;</a><a class='arrowright arrow'  id='calendarMonthnext'>&gt;</a></a>")
+			.append("<ul class='day clearfix' id='calendarDay'></ul>")
+			.append("<div class='monthTxt'><span id='calendarYear' style='display:none'></span><span id='calendarMonth'></span>月</div>");
+			
+			//日期格式化
+			Date.prototype.Format = function (fmt){ //author: meizz 
+				var o = {
+					"M+": this.getMonth() + 1, //月份 
+					"d+": this.getDate(), //日 
+					"h+": this.getHours(), //小时 
+					"m+": this.getMinutes(), //分 
+					"s+": this.getSeconds(), //秒 
+					"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+					"S": this.getMilliseconds() //毫秒 
+				};
+				if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+				for (var k in o)
+				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+				return fmt;
+			}
+			
+			if(o.newTody == true){
+			   o.newTime=parseISO8601(new Date().Format("yyyy-MM-dd"));
+			}else{
+			   o.newTime=parseISO8601(o.newTime);
+			}
+			o.limittime=parseISO8601(o.limittime);
+				cal=new Calendar(jdata);
+				cal.cal();
+				$('#thuimgPre').click(function(){
+					goPreDate();
+				});
+				$('#thuimgNext').click(function(){
+					goNextDate();
+				});
+				
+				$('#calendarMonthpre').click(function(){
+					cal.subMonth();
+				});
+				$('#calendarMonthnext').click(function(){
+					cal.addMonth();
+				});
+				
+				$("#calendarDay a").live("click",function(event){
+					event.preventDefault();
+					if(!$(this).hasClass('none')){
+					   GetImg($("#calendarYear").text(),$("#calendarMonth").text(),$(this).text())
+					}
+			    });				
+				var tmpdate=new Date(o.newTime);
+				tmpdate=getClosedDate(tmpdate);
+				GetImg(tmpdate.Format("yyyy"),tmpdate.Format("MM"),tmpdate.Format("d"));
+				if(o.responsive == true){
+					$(window).resize(function(){$(".thuimga").css("height",(4/12)*$(".mainImg").width());});
+				}
+			    function GetImg(y,m,d){
+					 var date=takefulldate(y,m,d);
+					 if(jdata[date]){
+						$("#calendarDay a").each(function(){
+							 if($("#calendarYear").text()==y && dulnum($("#calendarMonth").text())==dulnum(m) && $(this).text()==d){
+								 $(this).addClass("current");}else{$(this).removeClass("current");
+							}
+						});
+						if(date==takefulldate(o.newTime.Format("yyyy"),o.newTime.Format("MM"),o.newTime.Format("dd")))
+						{
+							$('#calendarToday').html("Today").addClass("today");
+							$('#thuimgNext').hide();//如果是最新的日期，隐藏向前的箭头
+						}else
+						{
+							$('#calendarToday').html('<span class="time-year">'+parseISO8601(date).Format('yyyy')+'</span><span class="time-days">'+parseISO8601(date).Format('MM-dd')+'</span>').removeClass("today");
+							//$('#calendarToday').html(parseISO8601(date).Format('yyyy.M.d')).removeClass("today");
+							
+							if(jdata[date].id!="1"){$('#thuimgNext').show()}else{$('#thuimgNext').hide()}
+							
+							if(parseInt(y,10)==o.limittime.getFullYear() && parseInt(m,10)==o.limittime.getMonth()+1) //最后月，隐藏向后翻箭头
+							{
+								if($("#calendarDay a").not(".none").first().text()==d)//当前月的有数据的第一天
+								{
+									$('#thuimgPre').hide();
+								}else
+								{
+									$('#thuimgPre').show();
+								}
+							}else
+							{
+								$('#thuimgPre').show();
+							}
+							
+						}
+						
+						ImgAction(date);
+						preload(date);
+					 }
+			    }
+
+			function ImgAction(date)
+			{
+				var bimg= new Image();
+				var calender_bigimg=$(".mainImg");
+				var datas ={
+				    "id":jdata[date].id,
+					"title":jdata[date].title,
+					"img":jdata[date].img,
+					"url":jdata[date].url
+				};
+				
+				if(date==takefulldate(o.newTime.Format("yyyy"),o.newTime.Format("MM"),o.newTime.Format("dd")))
+				{
+				
+				}else{
+				   $("#calendarDay").data(datas);
+				   datas = $("#calendarDay").data();
+
+				}
+				
+				bimg.onload=function()
+					{	
+						calender_bigimg.attr({"src":datas.img,"date":date});
+						calender_bigimg.animate({opacity:'show',left:0},500);
+						$('#thuImgTitle').text(datas.title);
+						if(o.imgUrl == true){$('.thua').attr("href",datas.url);}
+						$(".thuimga").css("height",(4/12)*calender_bigimg.width);
+					}
+				calender_bigimg.css("left","20px").hide();
+				bimg.src=datas.img;
+			}
+
+			function preload(date)
+			{
+				var preimg=[];
+				var tmpdate=parseISO8601(date);
+				tmpdate=getClosedDate(tmpdate);
+				for(var ii=0;ii<o.preloadingnum;ii++)
+				{
+					preimg[ii]=new Image();
+					if(jdata[tmpdate.Format("yyyy-MM-dd")])preimg[ii].src=jdata[tmpdate.Format("yyyy-MM-dd")].img;
+					tmpdate.setDate(tmpdate.getDate()-1);
+					tmpdate=getClosedDate(tmpdate);
+				}
+			}
+			
+			function getClosedDate(tmpdate) {//如果当前时间没有数据则往前找有数据的一条记录
+					 if(jdata[takefulldate(tmpdate.Format("yyyy"),tmpdate.Format("MM"),tmpdate.Format("dd"))]){
+					 }else{
+						 tmpdate.setDate(tmpdate.getDate()-1);
+						 if(tmpdate<=o.limittime) return tmpdate;
+						 if(tmpdate!="NaN")getClosedDate(tmpdate);
+					 }
+					 return tmpdate;
+				}
+			
+			function goPreDate()
+			{
+				var p=$("#calendarDay a.current").parent();
+				function getp() //找到之前日中有数据的列
+				{
+					if($(p)[0]==$("#calendarDay li:first")[0]) //如果是第一列则要向后退一个月
+					{
+						cal.subMonth();
+						p=$("#calendarDay li:last");
+					}else
+					{
+						p=p.prev();
+					}
+					
+					if(p.length==0) //每个月第一天，新图还未发布时问题
+					{
+						cal.subMonth();
+						p=$("#calendarDay a:not(.none):last").parent();
+						p=p.prev();
+					}
+					
+					if (p.children("a.none").length>0)
+					{
+						getp();
+					}
+					return p;
+				}
+				p=getp();
+				GetImg($("#calendarYear").text(),$("#calendarMonth").text(),$(p).text())
+			}
+			
+			
+			function goNextDate()
+			{
+				var p=$("#calendarDay a.current").parent();
+				function getp()//找到之后日中有数据的列
+				{
+					if($(p)[0]==$("#calendarDay li:last")[0])//月末则要向前进一个月
+					{
+						cal.addMonth();
+						p=$("#calendarDay li:first");
+					}else
+					{
+						p=p.next();
+					}
+					if (p.children("a.none").length>0)
+					{
+						getp();
+					}
+					return p;
+				}
+				p=getp();
+				GetImg($("#calendarYear").text(),$("#calendarMonth").text(),$(p).text())
+			}
+			
+			
+		});
+		
+function dulnum(num)
+{
+		num=parseInt(num,10);
+		if(num<10 && num>0)
+		{
+			return "0"+num;
+		}
+		return num;
+}
+
+function takefulldate(yer,mon,da)
+{
+	var mon=parseInt(mon,10);
+	var da=parseInt(da,10);
+	return yer+"-"+dulnum(mon)+"-"+dulnum(da);
+}
+
+/*国际标准时间*/
+function parseISO8601(dateStringInRange) {  
+   var isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s*$/,  
+       date = new Date(NaN), month,  
+       parts = isoExp.exec(dateStringInRange);  
+  
+   if(parts) {  
+     month = +parts[2];  
+     date.setFullYear(parts[1], month - 1, parts[3]);  
+     if(month != date.getMonth() + 1) {  
+       date.setTime(NaN);  
+     }  
+   }  
+   return date; 
+ }  
+
+
+ function Calendar(data) {
+	 
+	var oo=this;
+	var daysInMonth = new Array(31, 28, 31, 30, 31, 30, 31, 31,30, 31, 30, 31);
+	var today=new getToday();
+	var year=today.year;
+	var month=today.month;
+	 
+	this.cal=function(){	 
+		  var startDay = 1;
+		  var endDay=this.getDays(month,year);
+		  var inh="";
+		  for (var intLoop = 1; intLoop <= endDay;intLoop++) 
+		  {
+			  	var date=year+"-"+dulnum(month)+"-"+dulnum(intLoop);
+			    if(data[date])
+				{	
+					if(date==$("#thuimgWrap .mainImg").attr("date"))
+					{
+						inh+='<li><a class="current">'+intLoop+'</a></li>'
+					}else
+					{
+						inh+='<li><a>'+intLoop+'</a></li>'
+					}
+				}else
+				{
+					inh+='<li><a class="none">'+intLoop+'</a></li>'
+				}
+		  }
+			$("#calendarDay").html(inh);
+			$("#calendarMonth").html(month);
+			$("#calendarYear").html(year);
+	}
+	
+	 this.getDays=function(month, year) {
+		  if (1 == month-1) return ((0 == year % 4) && (0 != (year % 100))) ||(0 == year % 400) ? 29 : 28;
+		  else return daysInMonth[month-1];
+	 }
+	 
+	 function getToday() {
+		  this.now = new Date();
+		  //this.year = this.now.getFullYear();
+		  //this.month = this.now.getMonth();
+		  //this.day = this.now.getDate();
+		  this.year = o.newTime.getFullYear();
+		  this.month = o.newTime.getMonth()+1;
+		  this.day = o.newTime.getDate();
+	 }
+	 
+	
+	 this.subMonth=function(pos)
+	 {
+		 if(year==o.limittime.getFullYear() && month==o.limittime.getMonth()+1)return;
+		  if ((month)<2){
+		      month=12;
+		      year=year-1;
+		  }else{
+			  month=month-1;
+		  }
+		  this.cal();
+	 }
+	 
+	 this.addMonth=function()
+	 {
+		  if(year==today.year && month==today.month)return;
+		  if((month)>11)
+		  {
+		   month=1;
+		   year=year+1;
+		  } else
+		  {
+		   month=month+1;
+		  }
+		  this.cal();
+	 }
+	}
+	
+  }
+ })(jQuery);

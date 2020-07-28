@@ -1,0 +1,22 @@
+$(function(){
+	$(".mbanner .focus").sudyclndr({
+		"newTody":true,    					/*显示当前日期*/
+        "newTime": "2015-12-01",		    /*自定义最新日期 在 newTody为false下生效*/
+        "limittime":"2015-08-01",			/*遍历最早日期*/
+        "preloadingnum": 5,					/*预加载数目*/
+		"imgUrl":true					    /*是否加载图片链接 默认显示*/
+	});
+	
+	$('.post-11 .news_list').slick({
+		dots: true,
+		infinite: true,
+		slide: 'li',
+		slidesToShow:1,
+		slidesToScroll:1,
+		responsive: []
+	});
+	
+
+
+
+});
